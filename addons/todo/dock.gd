@@ -32,8 +32,8 @@ var content_tree = null
 # Called when the node enters the SceneTree
 func _enter_tree():
 	# Compiles and assign the regular expression pattern to use
-	regex.compile("(TODO|FIXME)\\:[:space:]*([^\\n]*)[:space:]*")
 	
+	regex.compile("(TODO|FIXME)\\:\\s*([^\\n]*)\\s*")
 	# Create instance of our Dock
 	dock = preload("scenes/todo_list.tscn").instance()
 	
@@ -65,6 +65,10 @@ func _enter_tree():
 	
 	# Populate Tree
 	populate_tree()
+
+
+func _ready():
+	set_auto_refresh(false)
 
 
 # Sets auto refresh (via on/off switch)
@@ -249,7 +253,7 @@ func find_files(directory, extensions, recur = false):
 				results.append(subfile)
 		
 		# If we are dealing with a file, and the extension matches our specific extensions
-		if(!dir.current_is_dir() && file.extension().to_lower() in extensions):
+		if(!dir.current_is_dir() && file.get_extension().to_lower() in extensions):
 			# Append file to results
 			results.append(location)
 		
@@ -299,7 +303,7 @@ func find_all_todos():
 	# Look through each file in files
 	for file in files:
 		# If the file is a GDScript (.gd)
-		if (file.extension().to_lower() == "gd"):
+		if (file.get_extension().to_lower() == "gd"):
 			# If we have previously checked this file, skip it
 			if(file in checked):
 				continue
@@ -318,7 +322,7 @@ func find_all_todos():
 			# Append file to checked
 			checked.append(file)
 #		# If the file is a scene (.tscn, .xscn, .scn), look for built-in scripts
-		elif (file.extension().to_lower() in ["tscn", "xscn", "scn"]):
+		elif (file.get_extension().to_lower() in ["tscn", "xscn", "scn"]):
 			# Load instance of the scene
 			var scene = load(file).instance()
 			
@@ -392,18 +396,20 @@ func todos_in_string(string):
 		# Increment line count
 		line_count += 1
 		
-		# Try to find pattern, return position if found
-		var pos = regex.find(line, 0)
+		# Try to find pattern
+		var result = regex.search(line)
 		
-		# If pos has been found
-		if(pos != -1):
+		# If pattern has been found
+		if(result):
 			# Append dictionary to todos array
 			todos.append({
 			"line": line_count, # Line Number we found the match
-			"type": regex.get_capture(1), # Type match (TODO, FIXME, etc.)
-			"text": regex.get_capture(2) # Message
+			"type": result.get_string(1), # Type match (TODO, FIXME, etc.)
+			"text": result.get_string(2) # Message
 			})
 	
 	# Return the todos array, containing each dictionary with data needed in order
 	# to view line number, type of comment, and the message
 	return todos
+
+
