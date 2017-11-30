@@ -5,7 +5,7 @@ tool
 extends EditorPlugin
 
 # Dock Title
-var dock_title = "TODO List"
+var dock_title = "TODO"
 
 # Dock
 var dock = null
