@@ -32,8 +32,8 @@ var content_tree = null
 # Called when the node enters the SceneTree
 func _enter_tree():
 	# Compiles and assign the regular expression pattern to use
+	regex.compile("(TODO|FIXME)\\s*([^\\n]*)\\s*")
 	
-	regex.compile("(TODO|FIXME)\\:\\s*([^\\n]*)\\s*")
 	# Create instance of our Dock
 	dock = preload("scenes/todo_list.tscn").instance()
 	
