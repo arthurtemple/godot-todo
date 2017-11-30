@@ -241,8 +241,8 @@ func find_files(directory, extensions, recur = false):
 		else:
 			location = dir.get_current_dir() + "" + file
 		
-		# If file is equal to '.' or '..', get next file and start over
-		if (file in [".", ".."]):
+		# If file is forbidden, get next file and start over
+		if (file.begins_with(".") or file.ends_with(".import") or file == "addons"):
 			file = dir.get_next()
 			continue
 		
